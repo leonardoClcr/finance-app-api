@@ -7,7 +7,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "prepare": "husky",
         "postinstall": "npx husky init",
-        "migrations": "node src/db/postgres/migrations/exec.js"
+        "migrations": "node src/db/postgres/migrations/exec.js",
+        "start:dev": "node --watch index.js"
     },
     "keywords": [],
     "author": "",
