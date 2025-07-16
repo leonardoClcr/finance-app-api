@@ -1,4 +1,6 @@
 import { CreateUserUseCase } from '../use-cases/create-user-use-case.js';
+import validator from 'validator';
+import { badRequest, created, serverError } from './helpers.js';
 
 export class CreateUserController {
     async execute(httpRequest) {
@@ -14,31 +16,38 @@ export class CreateUserController {
 
             for (const field of requiredFields) {
                 if (!params[field] || params[field].trim().length === 0) {
-                    return {
-                        statusCode: 400,
-                        body: {
-                            message: `Missing param: ${field}`,
-                        },
-                    };
+                    return badRequest({
+                        message: `Missing param: ${field}`,
+                    });
                 }
             }
+
+            // validar tamanho senha
+            const passwordIsValid = params.password.length < 6;
+            if (passwordIsValid) {
+                return badRequest({
+                    message: 'Password must be at least 6 characters.',
+                });
+            }
+
+            // validar o email
+            const emailIsValid = validator.isEmail(params.email);
+            if (!emailIsValid) {
+                return badRequest({
+                    message: 'Invalid e-mail. Please provide a valid one.',
+                });
+            }
+
             // chamar o use case
             const createUserUseCase = new CreateUserUseCase();
             const createdUser = await createUserUseCase.execute(params);
             // retornar a resposta ao usuario (status code 201)
-
-            return {
-                statusCode: 201,
-                body: createdUser,
-            };
+            return created(createdUser);
         } catch (error) {
             console.error(error);
-            return {
-                statusCode: 500,
-                body: {
-                    errorMessage: 'Internal Server error.',
-                },
-            };
+            return serverError({
+                message: 'Internal Server error.',
+            });
         }
     }
 }
