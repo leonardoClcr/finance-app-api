@@ -1,4 +1,4 @@
-import { badRequest } from '../helpers';
+import { badRequest } from '../helpers/index.js';
 import validator from 'validator';
 
 export const invalidPasswordResponse = () => {
