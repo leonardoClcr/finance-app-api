@@ -16,7 +16,6 @@ export class CreateTransactionController {
             const params = httpRequest.body;
             // validar campos obrigatorios
             const requiredFields = [
-                'id',
                 'user_id',
                 'name',
                 'date',
@@ -25,7 +24,10 @@ export class CreateTransactionController {
             ];
 
             for (const field of requiredFields) {
-                if (!params[field] || params[field].trim().length === 0) {
+                if (
+                    !params[field] ||
+                    params?.[field]?.toString().trim().length === 0
+                ) {
                     return badRequest({ message: `Missing param: ${field}` });
                 }
             }
